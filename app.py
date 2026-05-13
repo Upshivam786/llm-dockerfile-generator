@@ -8,7 +8,14 @@ client = InferenceClient(
 )
 
 def generate_dockerfile(description, base_os, app_type):
-    prompt = f"""<s>[INST] You are a DevOps expert. Generate a production-ready Dockerfile ONLY for:
+    messages = [
+        {
+            "role": "system",
+            "content": "You are a DevOps expert. Return ONLY Dockerfile content, no explanation."
+        },
+        {
+            "role": "user",
+            "content": f"""Generate a production-ready Dockerfile for:
 Description: {description}
 Base OS: {base_os}
 App Type: {app_type}
@@ -17,16 +24,16 @@ Include:
 - Multi-stage build if applicable
 - Non-root user for security
 - Health check
-- Clear comments
+- Clear comments"""
+        }
+    ]
 
-Return ONLY the Dockerfile content, nothing else. [/INST]"""
-
-    response = client.text_generation(
-        prompt,
-        max_new_tokens=800,
+    response = client.chat_completion(
+        messages=messages,
+        max_tokens=800,
         temperature=0.3
     )
-    return response
+    return response.choices[0].message.content
 
 demo = gr.Interface(
     fn=generate_dockerfile,
