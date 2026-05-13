@@ -1,3 +1,5 @@
+![Alt Text](result.png)
+
 ````markdown
 ---
 title: DevOps Dockerfile Generator
