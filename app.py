@@ -3,19 +3,20 @@ import os
 from huggingface_hub import InferenceClient
 
 client = InferenceClient(
-    model="meta-llama/Llama-3.2-3B-Instruct",
+    model="Qwen/Qwen2.5-72B-Instruct",
     token=os.environ.get("HF_TOKEN")
 )
 
 def generate_dockerfile(description, base_os, app_type):
-    messages = [
-        {
-            "role": "system",
-            "content": "You are a DevOps expert. Return ONLY Dockerfile content, no explanation, no markdown."
-        },
-        {
-            "role": "user",
-            "content": f"""Generate a production-ready Dockerfile for:
+    response = client.chat_completion(
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a DevOps expert. Return ONLY Dockerfile content, no explanation, no markdown backticks."
+            },
+            {
+                "role": "user",
+                "content": f"""Generate a production-ready Dockerfile for:
 Description: {description}
 Base OS: {base_os}
 App Type: {app_type}
@@ -25,11 +26,8 @@ Include:
 - Non-root user for security
 - Health check
 - Clear comments"""
-        }
-    ]
-
-    response = client.chat_completion(
-        messages=messages,
+            }
+        ],
         max_tokens=800,
         temperature=0.3
     )
