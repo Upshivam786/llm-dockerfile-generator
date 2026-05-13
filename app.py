@@ -1,27 +1,22 @@
 import gradio as gr
-import anthropic
+from huggingface_hub import InferenceClient
 
-client = anthropic.Anthropic()
+client = InferenceClient("mistralai/Mistral-7B-Instruct-v0.3")
 
 def generate_dockerfile(description, base_os, app_type):
-    prompt = f"""You are a DevOps expert. Generate a production-ready Dockerfile for:
+    prompt = f"""You are a DevOps expert. Generate a production-ready Dockerfile ONLY for:
 Description: {description}
 Base OS: {base_os}
 App Type: {app_type}
+Include multi-stage build, non-root user, health check, comments.
+Return ONLY the Dockerfile, nothing else."""
 
-Include:
-- Multi-stage build if applicable
-- Non-root user for security
-- Health check
-- Clear comments
-Only return the Dockerfile content, nothing else."""
-
-    message = client.messages.create(
-        model="claude-opus-4-5",
-        max_tokens=1024,
-        messages=[{"role": "user", "content": prompt}]
+    response = client.text_generation(
+        prompt,
+        max_new_tokens=800,
+        temperature=0.3
     )
-    return message.content[0].text
+    return response
 
 demo = gr.Interface(
     fn=generate_dockerfile,
@@ -32,7 +27,7 @@ demo = gr.Interface(
     ],
     outputs=gr.Code(language="dockerfile", label="Generated Dockerfile"),
     title="🐳 DevOps Dockerfile Generator",
-    description="Generate production-ready Dockerfiles instantly!"
+    description="Generate production-ready Dockerfiles using FREE AI!"
 )
 
 demo.launch()
