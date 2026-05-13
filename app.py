@@ -1,15 +1,25 @@
 import gradio as gr
+import os
 from huggingface_hub import InferenceClient
 
-client = InferenceClient("mistralai/Mistral-7B-Instruct-v0.3")
+client = InferenceClient(
+    model="mistralai/Mistral-7B-Instruct-v0.3",
+    token=os.environ.get("HF_TOKEN")
+)
 
 def generate_dockerfile(description, base_os, app_type):
-    prompt = f"""You are a DevOps expert. Generate a production-ready Dockerfile ONLY for:
+    prompt = f"""<s>[INST] You are a DevOps expert. Generate a production-ready Dockerfile ONLY for:
 Description: {description}
 Base OS: {base_os}
 App Type: {app_type}
-Include multi-stage build, non-root user, health check, comments.
-Return ONLY the Dockerfile, nothing else."""
+
+Include:
+- Multi-stage build if applicable
+- Non-root user for security
+- Health check
+- Clear comments
+
+Return ONLY the Dockerfile content, nothing else. [/INST]"""
 
     response = client.text_generation(
         prompt,
