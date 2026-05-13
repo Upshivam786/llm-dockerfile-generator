@@ -1,13 +1,13 @@
 ---
-title: My Devops Space
-emoji: 📚
-colorFrom: green
-colorTo: green
+title: DevOps Dockerfile Generator
+emoji: 🐳
+colorFrom: blue
+colorTo: cyan
 sdk: gradio
-sdk_version: 6.14.0
-python_version: '3.13'
+sdk_version: 4.44.0
 app_file: app.py
 pinned: false
 ---
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+# 🐳 DevOps Dockerfile Generator
+Generate production-ready Dockerfiles using AI!
